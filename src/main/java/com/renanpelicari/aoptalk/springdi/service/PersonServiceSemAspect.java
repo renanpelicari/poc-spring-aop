@@ -5,22 +5,27 @@ import com.renanpelicari.aoptalk.entity.Person;
 import com.renanpelicari.aoptalk.entity.adapter.PersonAdapter;
 import com.renanpelicari.aoptalk.entity.vo.PersonResponseVo;
 import com.renanpelicari.aoptalk.springdi.repository.PersonRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PersonService {
+@Slf4j
+public class PersonServiceSemAspect {
 
     private final PersonRepository personRepository;
 
-    public PersonService(PersonRepository personRepository) {
+    public PersonServiceSemAspect(PersonRepository personRepository) {
         this.personRepository = personRepository;
     }
 
-    @LogMethodExecution
     public PersonResponseVo getByEmail(String email) {
-        Person model = personRepository.findByEmail(email).orElseThrow(() ->
-                new RuntimeException("Person not found by email [" + email + "]"));
+        log.info("BEGIN getByEmail, args={}", email);
+        Person model = personRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("Person not found by email [" + email + "]"));
 
-        return PersonAdapter.modelToVo(model);
+        PersonResponseVo response = PersonAdapter.modelToVo(model);
+        log.info("END getByEmail, response={}", response);
+        return response;
     }
 }

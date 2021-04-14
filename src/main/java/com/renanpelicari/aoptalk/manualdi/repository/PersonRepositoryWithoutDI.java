@@ -2,10 +2,12 @@ package com.renanpelicari.aoptalk.manualdi.repository;
 
 import com.renanpelicari.aoptalk.entity.Person;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
+import javax.sql.DataSource;
 import java.util.UUID;
 
 @Slf4j
@@ -14,7 +16,13 @@ public class PersonRepositoryWithoutDI {
     private final JdbcTemplate jdbcTemplate;
 
     public PersonRepositoryWithoutDI() {
-        this.jdbcTemplate = new JdbcTemplate();
+        DataSource ds = DataSourceBuilder.create()
+                .driverClassName("org.h2.Driver")
+                .url("jdbc:h2:mem:test")
+                .username("SA")
+                .password("")
+                .build();
+        this.jdbcTemplate = new JdbcTemplate(ds);
     }
 
     public Person findByEmail(String name) {
